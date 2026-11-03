@@ -1,0 +1,73 @@
+<UserControl x:Class="BlackSite.App.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0" Padding="0,0,10,0">
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <StackPanel Margin="0,0,10,0">
+                <HeaderedContentControl Style="{StaticResource HudPanel}" Header="APPEARANCE" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="ACCENT COLOR" Style="{StaticResource Dim}" FontSize="11" Margin="0,0,0,6"/>
+                        <StackPanel x:Name="SwatchPanel" Orientation="Horizontal"/>
+                        <TextBlock Text="BACKGROUND STYLE" Style="{StaticResource Dim}" FontSize="11" Margin="0,16,0,6"/>
+                        <WrapPanel x:Name="BgPanel"/>
+                        <TextBlock x:Name="OpacityLabel" Style="{StaticResource Dim}" FontSize="11" Margin="0,16,0,4"/>
+                        <Slider x:Name="OpacitySlider" Minimum="0.15" Maximum="1" ValueChanged="Opacity_Changed"/>
+                    </StackPanel>
+                </HeaderedContentControl>
+                <HeaderedContentControl Style="{StaticResource HudPanel}" Header="ANIMATION" Margin="0,0,0,10">
+                    <StackPanel>
+                        <CheckBox x:Name="AnimToggle" Content="Enable animations (background, scan line, gauges, status lights)" Checked="Anim_Click" Unchecked="Anim_Click"/>
+                        <TextBlock x:Name="IntensityLabel" Style="{StaticResource Dim}" FontSize="11" Margin="0,10,0,4"/>
+                        <Slider x:Name="IntensitySlider" Minimum="0" Maximum="1" ValueChanged="Intensity_Changed"/>
+                        <TextBlock Text="Hover and button-press feedback always stays on." Style="{StaticResource Dim}" FontSize="11" Margin="0,8,0,0"/>
+                    </StackPanel>
+                </HeaderedContentControl>
+                <HeaderedContentControl Style="{StaticResource HudPanel}" Header="SOUND EFFECTS">
+                    <StackPanel>
+                        <CheckBox x:Name="SoundToggle" Content="Enable sound effects" Checked="Sound_Click" Unchecked="Sound_Click"/>
+                        <TextBlock x:Name="VolumeLabel" Style="{StaticResource Dim}" FontSize="11" Margin="0,10,0,4"/>
+                        <Slider x:Name="VolumeSlider" Minimum="0" Maximum="1" ValueChanged="Volume_Changed"/>
+                        <WrapPanel Margin="0,10,0,0" x:Name="SoundPanel"/>
+                    </StackPanel>
+                </HeaderedContentControl>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1">
+                <HeaderedContentControl Style="{StaticResource HudPanel}" Header="WINDOW" Margin="0,0,0,10">
+                    <StackPanel>
+                        <CheckBox x:Name="TopToggle" Content="Always on top" Checked="Window_Click" Unchecked="Window_Click"/>
+                        <CheckBox x:Name="FullToggle" Content="Fullscreen  (F11)" Checked="Window_Click" Unchecked="Window_Click"/>
+                        <CheckBox x:Name="BorderlessToggle" Content="Borderless window (custom title bar)" Checked="Window_Click" Unchecked="Window_Click"/>
+                    </StackPanel>
+                </HeaderedContentControl>
+                <HeaderedContentControl Style="{StaticResource HudPanel}" Header="STARTUP" Margin="0,0,0,10">
+                    <StackPanel>
+                        <CheckBox x:Name="StartupToggle" Content="Launch BLACKSITE when I sign in to Windows" Checked="Startup_Click" Unchecked="Startup_Click"/>
+                        <CheckBox x:Name="MinToggle" Content="Start minimized when launched by Windows" Checked="Window_Click" Unchecked="Window_Click"/>
+                        <TextBlock Text="Uses a shortcut in your Startup folder. No registry changes." Style="{StaticResource Dim}" FontSize="11" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </HeaderedContentControl>
+                <HeaderedContentControl Style="{StaticResource HudPanel}" Header="SHORTCUTS" Margin="0,0,0,10">
+                    <StackPanel>
+                        <TextBlock Text="Add, remove, replace and reorder the application shortcuts." Style="{StaticResource Dim}" FontSize="12" Margin="0,0,0,10" TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="OPEN SHORTCUT EDITOR" Style="{StaticResource HudButton}" Click="OpenEditor_Click"/>
+                            <Button Content="RESTORE DEFAULT SHORTCUTS" Style="{StaticResource HudButton}" Click="RestoreShortcuts_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </HeaderedContentControl>
+                <HeaderedContentControl Style="{StaticResource HudPanel}" Header="MAINTENANCE">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="RESTORE DEFAULT LAYOUT" Style="{StaticResource HudButton}" Click="RestoreLayout_Click"
+                                    ToolTip="Resets window size, position and fullscreen, and the shortcut list"/>
+                            <Button Content="RESET ALL SETTINGS" Style="{StaticResource DangerButton}" Click="ResetAll_Click"/>
+                        </StackPanel>
+                        <TextBlock x:Name="PathText" Style="{StaticResource Dim}" FontSize="11" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </HeaderedContentControl>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

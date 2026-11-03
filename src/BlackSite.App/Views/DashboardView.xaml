@@ -1,0 +1,190 @@
+<UserControl x:Class="BlackSite.App.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:BlackSite.App.Controls">
+    <!-- On small windows the dashboard keeps a usable minimum height and scrolls instead of overlapping. -->
+    <ScrollViewer x:Name="PageScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" SizeChanged="PageScroll_SizeChanged">
+    <Grid x:Name="Root" Height="600">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" MinHeight="190" MaxHeight="260"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="250" MaxWidth="320"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- SYSTEM SHORTCUTS -->
+            <HeaderedContentControl Style="{StaticResource HudPanel}" Header="SYSTEM SHORTCUTS" Margin="0,0,10,0">
+                <ItemsControl x:Name="SysList">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate><UniformGrid Columns="1"/></ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{StaticResource CardButton}" Margin="0,0,0,8" Padding="14,6" Click="Sys_Click"
+                                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"
+                                    AutomationProperties.Name="{Binding Title}" ToolTip="{Binding Description}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="52"/><ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Glyph}" FontSize="32">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource Icon}">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasCustomBrush}" Value="True">
+                                                        <Setter Property="Foreground" Value="{Binding IconBrush}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold"/>
+                                        <TextBlock Text="{Binding Description}" Style="{StaticResource Dim}" FontSize="12"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </HeaderedContentControl>
+
+            <!-- APPLICATIONS -->
+            <HeaderedContentControl Grid.Column="1" Style="{StaticResource HudPanel}" Header="APPLICATIONS">
+                <Grid>
+                    <Grid>
+                        <ItemsControl x:Name="AppList">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate><UniformGrid Columns="5"/></ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource CardButton}" Margin="5" Padding="8,10" MinHeight="96" Click="App_Click"
+                                            ToolTip="{Binding Tooltip}" AutomationProperties.Name="{Binding Name}"
+                                            HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Viewbox Stretch="Uniform" MaxHeight="72" Margin="0,2,0,6">
+                                                <Grid Width="64" Height="64">
+                                                    <TextBlock Style="{StaticResource Icon}" Text="{Binding Glyph}" FontSize="50"
+                                                               Visibility="{Binding HasGlyph, Converter={StaticResource BoolVis}}">
+                                                        <TextBlock.Effect>
+                                                            <DropShadowEffect Color="{DynamicResource AccentColor}" BlurRadius="14" ShadowDepth="0" Opacity="0.55"/>
+                                                        </TextBlock.Effect>
+                                                    </TextBlock>
+                                                    <Image Source="{Binding Icon}" Width="52" Height="52"
+                                                           Visibility="{Binding HasIcon, Converter={StaticResource BoolVis}}"/>
+                                                </Grid>
+                                            </Viewbox>
+                                            <TextBlock Grid.Row="1" Text="{Binding Name}" FontSize="15" FontWeight="SemiBold"
+                                                       HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Grid.Row="2" Text="{Binding Description}" Style="{StaticResource Dim}" FontSize="12"
+                                                       HorizontalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+                                            <!-- status light -->
+                                            <Ellipse Grid.RowSpan="3" Width="7" Height="7" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                     Fill="{StaticResource GreenBrush}" Margin="0,-2,-2,0"
+                                                     Visibility="{Binding IsAvailable, Converter={StaticResource BoolVis}}"/>
+                                            <Border Grid.RowSpan="3" Background="#CC200608" BorderBrush="{StaticResource RedBrush}" BorderThickness="1"
+                                                    CornerRadius="2" Padding="6,2" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,2,0,0"
+                                                    Visibility="{Binding IsAvailable, Converter={StaticResource InvBoolVis}}">
+                                                <TextBlock Text="UNAVAILABLE" FontSize="10" Foreground="{StaticResource RedBrush}"/>
+                                            </Border>
+                                            <!-- launch indicator -->
+                                            <ProgressBar Grid.Row="2" Height="2" IsIndeterminate="True" VerticalAlignment="Bottom" Margin="-6,0,-6,-8"
+                                                         Foreground="{DynamicResource AccentBrush}" Background="Transparent" BorderThickness="0"
+                                                         Visibility="{Binding IsLaunching, Converter={StaticResource BoolVis}}"/>
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-26,0,0" Style="{StaticResource HudButton}"
+                            Padding="12,3" FontSize="11" Content="EDIT SHORTCUTS" Click="Edit_Click" ToolTip="Add, remove, replace and reorder shortcuts"/>
+                </Grid>
+            </HeaderedContentControl>
+        </Grid>
+
+        <!-- LIVE MONITORING -->
+        <UniformGrid Grid.Row="1" Columns="4" Margin="0,10,0,0">
+            <HeaderedContentControl Style="{StaticResource HudPanel}" Header="CPU USAGE" Margin="0,0,10,0">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="46"/></Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <c:CircularGauge x:Name="CpuGauge" MinWidth="96" MinHeight="96"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                        <TextBlock Text="LOGICAL CORES" Style="{StaticResource Dim}" FontSize="10"/>
+                        <TextBlock x:Name="CpuCores" FontSize="18" FontWeight="SemiBold"/>
+                        <TextBlock Text="LOAD" Style="{StaticResource Dim}" FontSize="10" Margin="0,8,0,0"/>
+                        <TextBlock x:Name="CpuState" FontSize="14" FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <c:SparklineGraph x:Name="CpuGraph" Grid.Row="1" Grid.ColumnSpan="2" Maximum="100" Margin="0,6,0,0"/>
+                </Grid>
+            </HeaderedContentControl>
+
+            <HeaderedContentControl Style="{StaticResource HudPanel}" Header="MEMORY USAGE" Margin="0,0,10,0">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="46"/></Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <c:CircularGauge x:Name="MemGauge" MinWidth="96" MinHeight="96"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                        <TextBlock Text="USED" Style="{StaticResource Dim}" FontSize="10"/>
+                        <TextBlock x:Name="MemUsed" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="AVAILABLE" Style="{StaticResource Dim}" FontSize="10" Margin="0,6,0,0"/>
+                        <TextBlock x:Name="MemFree" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="TOTAL" Style="{StaticResource Dim}" FontSize="10" Margin="0,6,0,0"/>
+                        <TextBlock x:Name="MemTotal" FontSize="16" FontWeight="SemiBold"/>
+                    </StackPanel>
+                    <c:SparklineGraph x:Name="MemGraph" Grid.Row="1" Grid.ColumnSpan="2" Maximum="100" Margin="0,6,0,0"/>
+                </Grid>
+            </HeaderedContentControl>
+
+            <HeaderedContentControl Style="{StaticResource HudPanel}" x:Name="DiskPanel" Header="DISK USAGE (C:)" Margin="0,0,10,0">
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <c:CircularGauge x:Name="DiskGauge" MinWidth="110" MinHeight="110"/>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0">
+                        <TextBlock Text="USED" Style="{StaticResource Dim}" FontSize="10"/>
+                        <TextBlock x:Name="DiskUsed" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="FREE" Style="{StaticResource Dim}" FontSize="10" Margin="0,8,0,0"/>
+                        <TextBlock x:Name="DiskFree" FontSize="16" FontWeight="SemiBold"/>
+                        <TextBlock Text="CAPACITY" Style="{StaticResource Dim}" FontSize="10" Margin="0,8,0,0"/>
+                        <TextBlock x:Name="DiskTotal" FontSize="16" FontWeight="SemiBold"/>
+                    </StackPanel>
+                </Grid>
+            </HeaderedContentControl>
+
+            <HeaderedContentControl Style="{StaticResource HudPanel}" Header="NETWORK ACTIVITY">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="&#x25BC; DOWNLOAD" Style="{StaticResource Dim}" FontSize="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="NetDown" FontSize="24" FontWeight="SemiBold" Text="0.00"/>
+                            <TextBlock Text=" Mbps" Style="{StaticResource Dim}" FontSize="12" VerticalAlignment="Bottom" Margin="0,0,0,4"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="&#x25B2; UPLOAD" Style="{StaticResource Dim}" FontSize="10"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="NetUp" FontSize="24" FontWeight="SemiBold" Text="0.00" Foreground="{StaticResource GreenBrush}"/>
+                            <TextBlock Text=" Mbps" Style="{StaticResource Dim}" FontSize="12" VerticalAlignment="Bottom" Margin="0,0,0,4"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0">
+                        <c:SparklineGraph x:Name="NetGraph" Maximum="0"/>
+                        <TextBlock x:Name="NetStatus" FontSize="11" HorizontalAlignment="Left" VerticalAlignment="Top" Style="{StaticResource Dim}"/>
+                    </Grid>
+                </Grid>
+            </HeaderedContentControl>
+        </UniformGrid>
+    </Grid>
+    </ScrollViewer>
+</UserControl>
